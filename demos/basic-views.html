@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../fullcalendar.min.css' rel='stylesheet' />
+<link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../fullcalendar.min.js'></script>
+<script src='./ical.min.js'></script>
+<script type="text/javascript">
+ $(document).ready(function () {
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,listMonth'
+      },
+      defaultDate: '2018-02-12',
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+    });
+    $('#fetch').click(function () {
+      $.get('https://cors-anywhere.herokuapp.com/'+$('#eventsource').val(), function (res) {
+        var events = []
+        var parsed = ICAL.parse(res);
+        parsed[2].forEach(function(event) {
+          if (event[0] !== 'vevent') return
+          var summary, location, start, end;
+          event[1].forEach(function(event_item){
+            switch(event_item[0]){
+              case 'location':
+                location = event_item[3]
+                break;
+              case 'summary':
+                summary = event_item[3]
+                break;
+              case 'dtstart':
+                start = event_item[3]
+                break;
+              case 'dtend':
+                end = event_item[3]
+                break;
+            }
+            if (summary && location && start && end) {
+              console.log(summary, 'at', start)
+              events.push({
+                title: summary,
+                start: start,
+                end: end,
+                location: location
+              })
+            }
+          })
+        });
+        $('#calendar').fullCalendar('removeEventSources')
+        $('#calendar').fullCalendar('addEventSource', events);
+      })
+    })
+  });
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+<input id="eventsource">
+<a id="fetch" href="#">fetch</a>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

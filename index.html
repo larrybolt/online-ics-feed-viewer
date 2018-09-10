@@ -19,6 +19,8 @@
       },
       navLinks: true, // can click day/week names to navigate views
       editable: true,
+      minTime: "7:30:00",
+      maxTime: "21:30:00",
     });
     $('#fetch').click(function () {
       $.get('https://cors-anywhere.herokuapp.com/'+$('#eventsource').val(), function (res) {

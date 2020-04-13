@@ -23,10 +23,16 @@
     max-width: 900px;
     margin: 0 auto;
   }
+  body.from_url header {
+    display: none;
+  }
+  body.from_url footer {
+    display: none;
+  }
   header {
     margin: 0 auto 20px
   }
-  header input {
+  input[type="text"] {
     width: 70%;
     font-size: medium;
     padding: 4px
@@ -40,15 +46,20 @@
     display: flex;
   }
 
+  small.source {
+    position: absolute;
+    right: 3px; bottom: 3px;
+  }
+
 </style>
 </head>
 <body>
   <h1>Online ics feed ical viewer</h1>
   <header>
     <p class="line">
-    <input id="eventsource" placeholder="copy/paste the url and press fetch...">
+    <input type="text" id="eventsource" placeholder="copy/paste the url and press fetch...">
     <button id="fetch">fetch</button><br>
-    <label>Cors ignored?<input type="checkbox" id="cors-enabled"></label>
+    <label>Cors ignored?<input type="checkbox" id="cors-enabled" checked="checked"></label>
     </p>
     <p>
     <label for="myfile">or select local file</label>
@@ -56,12 +67,12 @@
     </p>
   </header>
   <div id='calendar'></div>
-  <footer>
-  <small>
-    I can't believe this doesn't exists... I just want this, nothing more. I just don't want to download / import to view something online.<br>
-    Time it took to make, aka combine two <a href="https://fullcalendar.io/">existing</a> <a href="https://github.com/mozilla-comm/ical.js">javascript</a> libraries: 2h<br>
-    result: something super usefull if you need it. If you need feature-x or it doesn't works, just open an <a href="https://github.com/larrybolt/online-ics-feed-viewer/issues">issue</a>.
-  </small>
+  <footer class="line">
+    You can share this page with the next url:
+    <input type="text" id="share">
   </footer>
+  <small class="source">
+    <a href="https://github.com/larrybolt/online-ics-feed-viewer">source</a>
+  </small>
 </body>
 </html>

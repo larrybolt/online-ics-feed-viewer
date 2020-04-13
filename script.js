@@ -1,3 +1,4 @@
+const cors_anywhere_url = "https://larrybolt-cors-anywhere.herokuapp.com/";
 const mapping = {
   dtstart: "start",
   dtend: "end",
@@ -34,17 +35,16 @@ function load_ics(ics_data) {
 }
 
 function createShareUrl(feed, cors, title, file) {
-  const params = {
-    feed,
-    cors,
-    title,
-    file,
-  };
-  const url = `${window.location.protocol}//${
-    window.location.host
-  }${window.location.pathname}?${new URLSearchParams(params).toString()}`;
-  $("#share input").val(url);
-  $('#share').show('slow');
+  if (feed) {
+    URIHash.set("feed", feed);
+  }
+  if (file) {
+    URIHash.set("file", file);
+  }
+  URIHash.set("cors", cors);
+  URIHash.set("title", title);
+  URIHash.set("hideinput", $("#share input").is(":checked"));
+  $("#share").show("slow");
 }
 function openFile(event) {
   var input = event.target;
@@ -63,10 +63,7 @@ function load_ics_from_base64(input) {
 }
 
 function fetch_ics_feed(url, cors, show_share) {
-  if (cors) {
-    url = `https://larrybolt-cors-anywhere.herokuapp.com/${url}`;
-  }
-  $.get(url, (res) => load_ics(res));
+  $.get(cors ? `${cors_anywhere_url}${url}` : url, (res) => load_ics(res));
   if (show_share) {
     createShareUrl(url, !!cors, "My Feed");
   }
@@ -83,23 +80,41 @@ $(document).ready(function () {
     minTime: "7:30:00",
     maxTime: "21:30:00",
   });
-  const url_feed = new URLSearchParams(window.location.search).get("feed");
-  const url_file = new URLSearchParams(window.location.search).get("feed");
-  const url_cors = !!new URLSearchParams(window.location.search).get("cors");
-  const url_title = new URLSearchParams(window.location.search).get("title");
+  const url_feed = URIHash.get("feed");
+  const url_file = URIHash.get("file");
+  const url_cors = URIHash.get("cors") === "true";
+  const url_title = URIHash.get("title");
+  const url_hideinput = URIHash.get("hideinput") === 'true';
+  console.log({
+    url_feed,
+    url_file,
+    url_cors,
+    url_title,
+    url_hideinput,
+  });
   if (url_title) {
     $("h1").text(url_title);
   }
   if (url_feed) {
-    console.log(`Load ${url_feed}`);
-    fetch_ics_feed(url_feed, url_cors, false);
-    $("body").addClass("from_url");
-  }
-  if (url_file) {
-    console.log(`Load file from file:`);
+    url = url_feed.replace(cors_anywhere_url, "");
+    console.log(`Load ${url}`);
+    fetch_ics_feed(url, url_cors, false);
+    $("#eventsource").val(url);
+  } else if (url_file) {
+    console.log(`Load file from file`);
     load_ics_from_base64(url_file);
+  }
+  if (url_cors) {
+    $("#cors-enabled").prop("checked", true);
+  }
+  if (url_hideinput) {
     $("body").addClass("from_url");
   }
+  $('#share input').click(function(){
+    if ($("#cors-enabled").is(":checked")) {
+      URIHash.set('hideinput', 'true')
+    }
+  });
   $("#fetch").click(function () {
     const corsAnywhereOn = $("#cors-enabled").is(":checked");
     const url = $("#eventsource").val();

@@ -62,12 +62,14 @@ function load_ics_from_base64(input) {
   load_ics(contents);
 }
 
-function fetch_ics_feed(url, cors) {
+function fetch_ics_feed(url, cors, show_share) {
   if (cors) {
     url = `https://larrybolt-cors-anywhere.herokuapp.com/${url}`;
   }
   $.get(url, (res) => load_ics(res));
-  createShareUrl(url, !!cors, "My Feed");
+  if (show_share) {
+    createShareUrl(url, !!cors, "My Feed");
+  }
 }
 $(document).ready(function () {
   $("#calendar").fullCalendar({
@@ -90,7 +92,7 @@ $(document).ready(function () {
   }
   if (url_feed) {
     console.log(`Load ${url_feed}`);
-    fetch_ics_feed(url_feed, url_cors);
+    fetch_ics_feed(url_feed, url_cors, false);
     $("body").addClass("from_url");
   }
   if (url_file) {
@@ -101,6 +103,6 @@ $(document).ready(function () {
   $("#fetch").click(function () {
     const corsAnywhereOn = $("#cors-enabled").is(":checked");
     const url = $("#eventsource").val();
-    fetch_ics_feed(url, corsAnywhereOn);
+    fetch_ics_feed(url, corsAnywhereOn, true);
   });
 });

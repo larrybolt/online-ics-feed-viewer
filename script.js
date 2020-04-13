@@ -43,7 +43,8 @@ function createShareUrl(feed, cors, title, file) {
   const url = `${window.location.protocol}//${
     window.location.host
   }/?${new URLSearchParams(params).toString()}`;
-  $("#share").val(url);
+  $("#share input").val(url);
+  $('#share').show('slow');
 }
 function openFile(event) {
   var input = event.target;

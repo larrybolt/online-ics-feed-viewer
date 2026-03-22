@@ -63,7 +63,7 @@ function load_ics_from_base64(input) {
 }
 
 function fetch_ics_feed(url, cors, show_share) {
-  $.get(cors ? `${cors_anywhere_url}${url}` : url, (res) => load_ics(res));
+  $.get({url: cors ? `${cors_anywhere_url}${url}` : url, accepts: { ics: "application/ics" }, dataType: 'ics'}, (res) => load_ics(res));
   if (show_share) {
     createShareUrl(url, !!cors, "My Feed");
   }

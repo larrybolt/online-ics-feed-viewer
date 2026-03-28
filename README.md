@@ -7,6 +7,8 @@
 
 You can use this to either view quickly the contents of a ics file, or a ics feed online, or to make a public ics feed or local file viewable trough an url.
 
+For CORS, visit [cors-anywhere.herokuapp.com](https://cors-anywhere.herokuapp.com/) to unblock cors proxy first.
+
 ## Why
 I can't believe this doesn't exists... I just want this, nothing more. I just don't want to download / import to view something online.<br>
     Time it took to make, aka combine two <a href="https://fullcalendar.io/">existing</a> <a href="https://github.com/mozilla-comm/ical.js">javascript</a> libraries: 2h<br>
